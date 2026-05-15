@@ -248,6 +248,7 @@
     };
 
     const selectElements = {};
+    const checkboxElements = {};
 
     const totalValue = document.getElementById('totalValue');
     const clearBtn = document.getElementById('clearBtn');
@@ -262,6 +263,7 @@
 
       if (name === 'Full Tuning' && checked) {
         state.selected['Full Tuning + Blindagem'] = false;
+        if (checkboxElements['Full Tuning + Blindagem']) checkboxElements['Full Tuning + Blindagem'].checked = false;
         Object.entries(tuningValues).forEach(([item, value]) => {
           state.selectValues[item] = value;
           if (selectElements[item]) selectElements[item].value = value;
@@ -270,6 +272,7 @@
 
       if (name === 'Full Tuning + Blindagem' && checked) {
         state.selected['Full Tuning'] = false;
+        if (checkboxElements['Full Tuning']) checkboxElements['Full Tuning'].checked = false;
         Object.entries(tuningValues).forEach(([item, value]) => {
           state.selectValues[item] = value;
           if (selectElements[item]) selectElements[item].value = value;
@@ -329,6 +332,7 @@
           applyFullTuning(name, state.selected[name]);
           updateTotal();
         });
+        checkboxElements[name] = input;
         const valueSpan = document.createElement('span');
         valueSpan.className = 'value';
         valueSpan.textContent = money(value);
@@ -380,7 +384,7 @@
         }
       });
 
-      [['Turbo', 7800], ['Full Tuning', 62400], ['Full Tuning + Blindagem', 94800]].forEach(([name, value]) => {
+      [['Turbo', 7800]].forEach(([name, value]) => {
         if (state.selected[name]) total += value;
       });
 
