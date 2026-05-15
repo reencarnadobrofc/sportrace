@@ -236,8 +236,70 @@
       selectValues: {}
     };
 
+    const selectElements = {};
+
     const totalValue = document.getElementById('totalValue');
     const clearBtn = document.getElementById('clearBtn');
+
+    const applyFullTuning = (name, checked) => {
+      if (name === 'Full Tuning' && checked) {
+        state.selectValues.Motor = 'Nível 4 - $ 17.400';
+        state.selectValues.Freio = 'Nível 3 - $ 11.760';
+        state.selectValues.Transmissão = 'Nível 3 - $ 13.800';
+        state.selectValues.Suspensão = 'Nível 4 - $ 17.400';
+        if (selectElements.Motor) selectElements.Motor.value = state.selectValues.Motor;
+        if (selectElements.Freio) selectElements.Freio.value = state.selectValues.Freio;
+        if (selectElements.Transmissão) selectElements.Transmissão.value = state.selectValues.Transmissão;
+        if (selectElements.Suspensão) selectElements.Suspensão.value = state.selectValues.Suspensão;
+      }
+
+      if (name === 'Full Tuning + Blindagem' && checked) {
+        state.selectValues.Motor = 'Nível 4 - $ 17.400';
+        state.selectValues.Freio = 'Nível 3 - $ 11.760';
+        state.selectValues.Transmissão = 'Nível 3 - $ 13.800';
+        state.selectValues.Suspensão = 'Nível 4 - $ 17.400';
+        state.selectValues.Blindagem = 'Nível 5 - $ 32.400';
+        if (selectElements.Motor) selectElements.Motor.value = state.selectValues.Motor;
+        if (selectElements.Freio) selectElements.Freio.value = state.selectValues.Freio;
+        if (selectElements.Transmissão) selectElements.Transmissão.value = state.selectValues.Transmissão;
+        if (selectElements.Suspensão) selectElements.Suspensão.value = state.selectValues.Suspensão;
+        if (selectElements.Blindagem) selectElements.Blindagem.value = state.selectValues.Blindagem;
+      }
+
+      if (!checked && name === 'Full Tuning') {
+        ['Motor', 'Freio', 'Transmissão', 'Suspensão'].forEach((item) => {
+          const expected = {
+            Motor: 'Nível 4 - $ 17.400',
+            Freio: 'Nível 3 - $ 11.760',
+            Transmissão: 'Nível 3 - $ 13.800',
+            Suspensão: 'Nível 4 - $ 17.400'
+          }[item];
+          if (state.selectValues[item] === expected) {
+            state.selectValues[item] = 'Nenhum';
+            if (selectElements[item]) selectElements[item].value = 'Nenhum';
+          }
+        });
+      }
+
+      if (!checked && name === 'Full Tuning + Blindagem') {
+        ['Motor', 'Freio', 'Transmissão', 'Suspensão'].forEach((item) => {
+          const expected = {
+            Motor: 'Nível 4 - $ 17.400',
+            Freio: 'Nível 3 - $ 11.760',
+            Transmissão: 'Nível 3 - $ 13.800',
+            Suspensão: 'Nível 4 - $ 17.400'
+          }[item];
+          if (state.selectValues[item] === expected) {
+            state.selectValues[item] = 'Nenhum';
+            if (selectElements[item]) selectElements[item].value = 'Nenhum';
+          }
+        });
+        if (state.selectValues.Blindagem === 'Nível 5 - $ 32.400') {
+          state.selectValues.Blindagem = 'Nenhum';
+          if (selectElements.Blindagem) selectElements.Blindagem.value = 'Nenhum';
+        }
+      }
+    };
 
     const renderRow = ({ name, value, type, selectOptions }) => {
       const row = document.createElement('div');
@@ -255,6 +317,7 @@
           state.selectValues[name] = e.target.value;
           updateTotal();
         });
+        selectElements[name] = select;
         row.append(label, select);
       } else if (type === 'checkbox') {
         const input = document.createElement('input');
@@ -262,6 +325,13 @@
         input.checked = !!state.selected[name];
         input.addEventListener('change', () => {
           state.selected[name] = !state.selected[name];
+          if (name === 'Full Tuning') {
+            state.selected['Full Tuning + Blindagem'] = false;
+          }
+          if (name === 'Full Tuning + Blindagem') {
+            state.selected['Full Tuning'] = false;
+          }
+          applyFullTuning(name, state.selected[name]);
           updateTotal();
         });
         const valueSpan = document.createElement('span');
@@ -369,7 +439,7 @@
       });
 
       ['Turbo', 'Full Tuning', 'Full Tuning + Blindagem'].forEach((name, index) => {
-        const values = [7800, 84000, 116400];
+        const values = [7800, 62400, 94800];
         document.getElementById('full').appendChild(renderRow({ name, value: values[index], type: 'checkbox' }));
       });
 
