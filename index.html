@@ -242,39 +242,35 @@
     const clearBtn = document.getElementById('clearBtn');
 
     const applyFullTuning = (name, checked) => {
+      const tuningValues = {
+        Motor: 'Nível 4 - $ 17.400',
+        Freio: 'Nível 3 - $ 11.760',
+        Transmissão: 'Nível 3 - $ 13.800',
+        Suspensão: 'Nível 4 - $ 17.400'
+      };
+
       if (name === 'Full Tuning' && checked) {
-        state.selectValues.Motor = 'Nível 4 - $ 17.400';
-        state.selectValues.Freio = 'Nível 3 - $ 11.760';
-        state.selectValues.Transmissão = 'Nível 3 - $ 13.800';
-        state.selectValues.Suspensão = 'Nível 4 - $ 17.400';
-        if (selectElements.Motor) selectElements.Motor.value = state.selectValues.Motor;
-        if (selectElements.Freio) selectElements.Freio.value = state.selectValues.Freio;
-        if (selectElements.Transmissão) selectElements.Transmissão.value = state.selectValues.Transmissão;
-        if (selectElements.Suspensão) selectElements.Suspensão.value = state.selectValues.Suspensão;
+        state.selected['Full Tuning + Blindagem'] = false;
+        Object.entries(tuningValues).forEach(([item, value]) => {
+          state.selectValues[item] = value;
+          if (selectElements[item]) selectElements[item].value = value;
+        });
       }
 
       if (name === 'Full Tuning + Blindagem' && checked) {
-        state.selectValues.Motor = 'Nível 4 - $ 17.400';
-        state.selectValues.Freio = 'Nível 3 - $ 11.760';
-        state.selectValues.Transmissão = 'Nível 3 - $ 13.800';
-        state.selectValues.Suspensão = 'Nível 4 - $ 17.400';
-        state.selectValues.Blindagem = 'Nível 5 - $ 32.400';
-        if (selectElements.Motor) selectElements.Motor.value = state.selectValues.Motor;
-        if (selectElements.Freio) selectElements.Freio.value = state.selectValues.Freio;
-        if (selectElements.Transmissão) selectElements.Transmissão.value = state.selectValues.Transmissão;
-        if (selectElements.Suspensão) selectElements.Suspensão.value = state.selectValues.Suspensão;
-        if (selectElements.Blindagem) selectElements.Blindagem.value = state.selectValues.Blindagem;
+        state.selected['Full Tuning'] = false;
+        Object.entries(tuningValues).forEach(([item, value]) => {
+          state.selectValues[item] = value;
+          if (selectElements[item]) selectElements[item].value = value;
+        });
+        const blindagemValue = 'Nível 5 - $ 32.400';
+        state.selectValues.Blindagem = blindagemValue;
+        if (selectElements.Blindagem) selectElements.Blindagem.value = blindagemValue;
       }
 
       if (!checked && name === 'Full Tuning') {
-        ['Motor', 'Freio', 'Transmissão', 'Suspensão'].forEach((item) => {
-          const expected = {
-            Motor: 'Nível 4 - $ 17.400',
-            Freio: 'Nível 3 - $ 11.760',
-            Transmissão: 'Nível 3 - $ 13.800',
-            Suspensão: 'Nível 4 - $ 17.400'
-          }[item];
-          if (state.selectValues[item] === expected) {
+        Object.entries(tuningValues).forEach(([item, value]) => {
+          if (state.selectValues[item] === value) {
             state.selectValues[item] = 'Nenhum';
             if (selectElements[item]) selectElements[item].value = 'Nenhum';
           }
@@ -282,14 +278,8 @@
       }
 
       if (!checked && name === 'Full Tuning + Blindagem') {
-        ['Motor', 'Freio', 'Transmissão', 'Suspensão'].forEach((item) => {
-          const expected = {
-            Motor: 'Nível 4 - $ 17.400',
-            Freio: 'Nível 3 - $ 11.760',
-            Transmissão: 'Nível 3 - $ 13.800',
-            Suspensão: 'Nível 4 - $ 17.400'
-          }[item];
-          if (state.selectValues[item] === expected) {
+        Object.entries(tuningValues).forEach(([item, value]) => {
+          if (state.selectValues[item] === value) {
             state.selectValues[item] = 'Nenhum';
             if (selectElements[item]) selectElements[item].value = 'Nenhum';
           }
@@ -325,12 +315,6 @@
         input.checked = !!state.selected[name];
         input.addEventListener('change', () => {
           state.selected[name] = !state.selected[name];
-          if (name === 'Full Tuning') {
-            state.selected['Full Tuning + Blindagem'] = false;
-          }
-          if (name === 'Full Tuning + Blindagem') {
-            state.selected['Full Tuning'] = false;
-          }
           applyFullTuning(name, state.selected[name]);
           updateTotal();
         });
@@ -385,7 +369,7 @@
         }
       });
 
-      [['Turbo', 7800], ['Full Tuning', 84000], ['Full Tuning + Blindagem', 116400]].forEach(([name, value]) => {
+      [['Turbo', 7800], ['Full Tuning', 62400], ['Full Tuning + Blindagem', 94800]].forEach(([name, value]) => {
         if (state.selected[name]) total += value;
       });
 
