@@ -389,11 +389,21 @@
       });
 
       [...estetica, ...extras].forEach(([name, value]) => {
-        if (state.selected[name]) total += value;
+        const qty = state.quantities[name] || 0;
+        if (qty > 0) {
+          total += qty * value;
+        } else if (state.selected[name]) {
+          total += value;
+        }
       });
 
       servicos.forEach(([name, value]) => {
-        total += (state.quantities[name] || 0) * value;
+        const qty = state.quantities[name] || 0;
+        if (qty > 0) {
+          total += qty * value;
+        } else if (state.selected[name]) {
+          total += value;
+        }
       });
 
       vendas.forEach(([name, value]) => {
@@ -442,9 +452,19 @@
         document.getElementById('full').appendChild(renderRow({ name, value: values[index], type: 'checkbox' }));
       });
 
-      estetica.forEach(([name, value]) => document.getElementById('estetica').appendChild(renderRow({ name, value, type: 'checkbox' })));
-      extras.forEach(([name, value]) => document.getElementById('extras').appendChild(renderRow({ name, value, type: 'checkbox' })));
-      servicos.forEach(([name, value]) => document.getElementById('servicos').appendChild(renderRow({ name, value, type: 'quantity' })));
+      estetica.forEach(([name, value]) => {
+        const type = name === 'Não listados' ? 'quantity' : 'checkbox';
+        document.getElementById('estetica').appendChild(renderRow({ name, value, type }));
+      });
+
+      extras.forEach(([name, value]) => {
+        document.getElementById('extras').appendChild(renderRow({ name, value, type: 'quantity' }));
+      });
+
+      servicos.forEach(([name, value]) => {
+        const type = name.startsWith('Atendimento') ? 'checkbox' : 'quantity';
+        document.getElementById('servicos').appendChild(renderRow({ name, value, type }));
+      });
       vendas.forEach(([name, value]) => document.getElementById('vendas').appendChild(renderRow({ name, value, type: 'quantity' })));
 
       clearBtn.addEventListener('click', () => {
