@@ -1,0 +1,325 @@
+import { useState } from 'react';
+
+export default function SportRaceCalculator() {
+  const [selected, setSelected] = useState({});
+  const [quantities, setQuantities] = useState({});
+  const [selectValues, setSelectValues] = useState({});
+
+  const sections = [
+    {
+      title: 'MELHORIAS',
+      items: ['Motor', 'Freio', 'Transmissão', 'Suspensão', 'Blindagem'],
+    },
+  ];
+
+  const estetica = [
+    ['Rodas', 4200],
+    ['Cor das Rodas', 1400],
+    ['Cor da Fumaça', 2160],
+    ['Insulfilm', 1440],
+    ['Placa', 3000],
+    ['Buzina', 1800],
+    ['Neon', 1440],
+    ['Cor do Neon', 1440],
+    ['Xenon', 1440],
+    ['Cor do Xenon', 1440],
+    ['Pintura Camaleão', 2500],
+    ['Pinturas Spray', 1920],
+    ['Não listados', 1800],
+  ];
+
+  const servicos = [
+    ['Atendimento no Sul', 700],
+    ['Atendimento no Norte', 1200],
+    ['Reparo Carro', 1200],
+    ['Repor Pneu', 900],
+    ['Rastreador', 15600],
+    ['Kit Drift', 15600],
+    ['Nitro', 9600],
+  ];
+
+  const vendas = [
+    ['Reparo', 1200],
+    ['Pneu', 900],
+    ['Chave de Roda', 960],
+  ];
+
+  const extras = [
+    ['Ajuste de Roda', 4200],
+    ['Suspensão a Ar', 5200],
+    ['Extras', 1800],
+  ];
+
+  const money = (v) =>
+    new Intl.NumberFormat('pt-BR').format(v);
+
+  const toggleCheckbox = (key) => {
+    setSelected((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const updateQuantity = (key, amount) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [key]: Math.max(0, (prev[key] || 0) + amount),
+    }));
+  };
+
+  const getSelectValue = (item) => {
+    const value = selectValues[item];
+    if (!value || value === 'Nenhum') return 0;
+    const match = value.match(/\$ ([\d.]+)/);
+    return match ? parseFloat(match[1].replace(/\./g, '')) : 0;
+  };
+
+  const calculateTotal = () => {
+    let total = 0;
+
+    // Melhorias (selects)
+    sections[0].items.forEach((item) => {
+      total += getSelectValue(item);
+    });
+
+    // Melhorias full
+    [
+      ['Turbo', 7800],
+      ['Full Tuning', 84000],
+      ['Full Tuning + Blindagem', 116400],
+    ].forEach(([name]) => {
+      if (selected[name]) total += parseInt(name === 'Turbo' ? 7800 : name === 'Full Tuning' ? 84000 : 116400);
+    });
+
+    // Estética e Extras
+    [...estetica, ...extras].forEach(([name, value]) => {
+      if (selected[name]) total += value;
+    });
+
+    // Serviços (com quantidade)
+    servicos.forEach(([name, value]) => {
+      total += (quantities[name] || 0) * value;
+    });
+
+    // Vendas (com quantidade)
+    vendas.forEach(([name, value]) => {
+      total += (quantities[name] || 0) * value;
+    });
+
+    return total;
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white p-6 font-sans">
+      <div className="text-center text-6xl font-bold text-red-500 mb-6 drop-shadow-[0_0_18px_rgba(255,0,0,0.9)]">
+        $ {money(calculateTotal())}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* MELHORIAS */}
+        <div className="rounded-3xl border border-orange-500/40 bg-[#0f0905] p-6 shadow-[0_0_30px_rgba(255,136,0,0.15)]">
+          <h2 className="text-3xl font-bold text-orange-400 border-b border-orange-500 pb-2 mb-6 tracking-wide">
+            MELHORIAS
+          </h2>
+
+          <div className="space-y-4">
+            {sections[0].items.map((item) => (
+              <div key={item} className="flex items-center justify-between gap-4">
+                <span className="text-lg">{item}</span>
+
+                <select className="bg-[#2a1b12] border border-orange-500/20 rounded-xl px-4 py-3 w-72 outline-none text-white"
+                  value={selectValues[item] || ''}
+                  onChange={(e) => setSelectValues((prev) => ({ ...prev, [item]: e.target.value }))}>
+                  {item === 'Blindagem' ? (
+                    <>
+                      <option>Nenhum</option>
+                      <option>Nível 1 - $ 13.200</option>
+                      <option>Nível 2 - $ 15.000</option>
+                      <option>Nível 3 - $ 19.800</option>
+                      <option>Nível 4 - $ 25.800</option>
+                      <option>Nível 5 - $ 32.400</option>
+                    </>
+                  ) : (
+                    <>
+                      <option>Nenhum</option>
+                      <option>Nível 1 - $ 9.000</option>
+                      <option>Nível 2 - $ 11.760</option>
+                      <option>Nível 3 - $ 13.800</option>
+                      <option>Nível 4 - $ 17.400</option>
+                      <option>Nível 5 - $ 22.200</option>
+                    </>
+                  )}
+                </select>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10">
+            <h2 className="text-3xl font-bold text-orange-400 border-b border-orange-500 pb-2 mb-6 tracking-wide">
+              MELHORIAS FULL
+            </h2>
+
+            <div className="space-y-5">
+              {[
+                ['Turbo', 7800],
+                ['Full Tuning', 84000],
+                ['Full Tuning + Blindagem', 116400],
+              ].map(([name, value]) => (
+                <div
+                  key={name}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex gap-2 text-lg">
+                    <span>{name}</span>
+                    <span className="text-cyan-300 font-bold">
+                      $ {money(value)}
+                    </span>
+                  </div>
+
+                  <input 
+                    type="checkbox" 
+                    className="w-5 h-5"
+                    checked={selected[name] || false}
+                    onChange={() => toggleCheckbox(name)}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-8 text-cyan-300 font-semibold">
+              OBS: TURBO não é do FullTuning.
+            </p>
+          </div>
+        </div>
+
+        {/* ESTETICA */}
+        <div className="rounded-3xl border border-orange-500/40 bg-[#0f0905] p-6 shadow-[0_0_30px_rgba(255,136,0,0.15)]">
+          <h2 className="text-3xl font-bold text-orange-400 border-b border-orange-500 pb-2 mb-6 tracking-wide">
+            ESTÉTICA
+          </h2>
+
+          <div className="space-y-4">
+            {estetica.map(([name, value]) => (
+              <div key={name} className="flex items-center justify-between">
+                <div className="flex gap-2 text-lg">
+                  <span>{name}</span>
+                  <span className="text-cyan-300 font-bold">
+                    $ {money(value)}
+                  </span>
+                </div>
+
+                <input 
+                  type="checkbox" 
+                  className="w-5 h-5"
+                  checked={selected[name] || false}
+                  onChange={() => toggleCheckbox(name)}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10">
+            <h2 className="text-3xl font-bold text-orange-400 border-b border-orange-500 pb-2 mb-6 tracking-wide">
+              EXTRAS
+            </h2>
+
+            <div className="space-y-4">
+              {extras.map(([name, value]) => (
+                <div key={name} className="flex items-center justify-between">
+                  <div className="flex gap-2 text-lg">
+                    <span>{name}</span>
+                    <span className="text-cyan-300 font-bold">
+                      $ {money(value)}
+                    </span>
+                  </div>
+
+                  <input 
+                    type="checkbox" 
+                    className="w-5 h-5"
+                    checked={selected[name] || false}
+                    onChange={() => toggleCheckbox(name)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* SERVICOS */}
+        <div className="rounded-3xl border border-orange-500/40 bg-[#0f0905] p-6 shadow-[0_0_30px_rgba(255,136,0,0.15)]">
+          <h2 className="text-3xl font-bold text-orange-400 border-b border-orange-500 pb-2 mb-6 tracking-wide">
+            SERVIÇOS
+          </h2>
+
+          <div className="space-y-5">
+            {servicos.map(([name, value]) => (
+              <div key={name} className="flex items-center justify-between">
+                <div className="flex gap-2 text-lg">
+                  <span>{name}</span>
+                  <span className="text-cyan-300 font-bold">
+                    $ {money(value)}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button 
+                    className="w-8 h-8 rounded-lg bg-[#1d140d] hover:bg-orange-500/20"
+                    onClick={() => updateQuantity(name, -1)}
+                  >
+                    -
+                  </button>
+                  <span>{quantities[name] || 0}</span>
+                  <button 
+                    className="w-8 h-8 rounded-lg bg-[#1d140d] hover:bg-orange-500/20"
+                    onClick={() => updateQuantity(name, 1)}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10">
+            <h2 className="text-3xl font-bold text-orange-400 border-b border-orange-500 pb-2 mb-6 tracking-wide">
+              VENDAS
+            </h2>
+
+            <div className="space-y-5">
+              {vendas.map(([name, value]) => (
+                <div key={name} className="flex items-center justify-between">
+                  <div className="flex gap-2 text-lg">
+                    <span>{name}</span>
+                    <span className="text-cyan-300 font-bold">
+                      $ {money(value)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button 
+                      className="w-8 h-8 rounded-lg bg-[#1d140d] hover:bg-orange-500/20"
+                      onClick={() => updateQuantity(name, -1)}
+                    >
+                      -
+                    </button>
+                    <span>{quantities[name] || 0}</span>
+                    <button 
+                      className="w-8 h-8 rounded-lg bg-[#1d140d] hover:bg-orange-500/20"
+                      onClick={() => updateQuantity(name, 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 text-right text-orange-400 text-2xl tracking-widest">
+        CALCULADORA
+      </div>
+    </div>
+  );
+}
