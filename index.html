@@ -256,8 +256,8 @@
     const applyFullTuning = (name, checked) => {
       const tuningValues = {
         Motor: 'Nível 4 - $ 17.400',
-        Freio: 'Nível 3 - $ 13.200',
-        Transmissão: 'Nível 3 - $ 13.200',
+        Freio: 'Nível 3 - $ 13.800',
+        Transmissão: 'Nível 3 - $ 13.800',
         Suspensão: 'Nível 4 - $ 17.400'
       };
 
@@ -437,11 +437,15 @@
           'Nível 3 - $ 19.800',
           'Nível 4 - $ 25.800',
           'Nível 5 - $ 32.400'
-        ] : name === 'Transmissão' ? [
-          'Nível 1 - $ 11.760',
-          'Nível 2 - $ 13.200',
-          'Nível 3 - $ 17.400',
-          'Nível 4 - $ 22.200'
+        ] : [
+          'Nível 1 - $ 9.000',
+          'Nível 2 - $ 11.760',
+          'Nível 3 - $ 13.800',
+          'Nível 4 - $ 17.400',
+          'Nível 5 - $ 22.200'
+        ];
+        melhoriasContainer.appendChild(renderRow({ name, value: 0, type: 'select', selectOptions: options }));
+      });
 
       ['Turbo', 'Full Tuning', 'Full Tuning + Blindagem'].forEach((name, index) => {
         const values = [7800, 62400, 94800];
