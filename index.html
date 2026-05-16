@@ -256,8 +256,8 @@
     const applyFullTuning = (name, checked) => {
       const tuningValues = {
         Motor: 'Nível 4 - $ 17.400',
-        Freio: 'Nível 3 - $ 13.800',
-        Transmissão: 'Nível 3 - $ 13.800',
+        Freio: 'Nível 3 - $ 13.200',
+        Transmissão: 'Nível 3 - $ 13.200',
         Suspensão: 'Nível 4 - $ 17.400'
       };
 
@@ -440,7 +440,7 @@
         ] : [
           'Nível 1 - $ 9.000',
           'Nível 2 - $ 11.760',
-          'Nível 3 - $ 13.800',
+          'Nível 3 - $ 13.200',
           'Nível 4 - $ 17.400',
           'Nível 5 - $ 22.200'
         ];
@@ -453,7 +453,7 @@
       });
 
       estetica.forEach(([name, value]) => {
-        const type = name === 'Não listados' ? 'quantity' : 'checkbox';
+        const type = (name === 'Não listados' || name === 'Pinturas Spray') ? 'quantity' : 'checkbox';
         document.getElementById('estetica').appendChild(renderRow({ name, value, type }));
       });
 
